@@ -1,7 +1,7 @@
 !/bin/bash
 
 (
-yum -y install fio git iperf gcc sysstat
+yum -y install fio git iperf gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes
 
 EC2_nstancetype="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-type || die \"wget nstance-type has failed: $?\"`"
 echo "AWS instance type: " $EC2_nstancetype
@@ -13,6 +13,14 @@ tar -vxzf Geekbench-3.1.2-Linux.tar.gz
 dist/Geekbench-3.1.2-Linux/geekbench_x86_64 -r zorang@gmail.com secret-key
 dist/Geekbench-3.1.2-Linux/geekbench_x86_64 --upload
 
+# UNIXBench
+echo -e "\n\nUNIXbench - CPU / Memory bandwidth:"
+wget -c http://byte-unixbench.googlecode.com/files/unixbench-5.1.3.tgz
+tar xvzf unixbench-5.1.3.tgz
+cd unixbench-5.1.3
+make
+./Run
+cd ..
 
 # Latency test
 echo -e "\n\n==================================================================================================================\n\nLMbench L1 L2 L3 and Memory latency:\n\n"
