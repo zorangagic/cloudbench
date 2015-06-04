@@ -8,7 +8,7 @@ Benchmark test following:
 4. Network bandwidth: Global and Australian
 5. Storage - Sequential: dd
 6. Storage - Random: fio
-7. Network bandwidth: iperf
+7. Network bandwidth: iperf 
  
 
 WARNING:
