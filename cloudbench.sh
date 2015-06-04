@@ -56,12 +56,12 @@ umount /mnt
 
 # fio IO test
 echo -e "\n\n==================================================================================================================\n\nfio Random 8K 70/30 qd=16:\n\n"
-fio --filename=$d --direct=1 --rw=randrw --refill_buffers --norandommap --randrepeat=0 --ioengine=libaio --bs=8k --rwmixread=70 --iodepth=16 --numjobs=16 --runtime=120 --ramp_time=5 --group_reporting --name=8k7030test
+fio --filename=$d --direct=1 --rw=randrw --refill_buffers --norandommap --ioengine=libaio --bs=8k --rwmixread=70 --iodepth=16 --numjobs=16 --runtime=120 --ramp_time=5 --group_reporting --name=8k7030test
 
-echo -e "\n\n==================================================================================================================\n\nfio Sequential read 1MB qd=16:\n\n"
+echo -e "\n\n==================================================================================================================\n\nfio Sequential read 1MB qd=32:\n\n"
 fio --name=readbw --filename=$d --direct=1 --rw=read  --bs=1m --numjobs=4 --iodepth=32 --direct=1 --iodepth_batch=16 --iodepth_batch_complete=16 --runtime=120 --ramp_time=5 --norandommap --time_based --ioengine=libaio --group_reporting
 
-echo -e "\n\n==================================================================================================================\n\nfio Sequential write 1MB qd=16:\n\n"
+echo -e "\n\n==================================================================================================================\n\nfio Sequential write 1MB qd=32:\n\n"
 fio --name=writebw --filename=$d --direct=1 --rw=write  --bs=1m --numjobs=4 --iodepth=32 --direct=1 --iodepth_batch=16 --iodepth_batch_complete=16 --runtime=120 --ramp_time=5 --norandommap --time_based --ioengine=libaio --group_reporting
 
 echo -e "\n\n==================================================================================================================\n\nfio Random read 8K qd=16:\n\n"
