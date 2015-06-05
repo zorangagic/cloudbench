@@ -1,7 +1,7 @@
 #!/bin/bash
 
 (
-yum -y install fio git iperf gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes
+yum -y install fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes
 
 EC2_nstancetype="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-type || die \"wget nstance-type has failed: $?\"`"
 echo "AWS instance type: " $EC2_nstancetype
