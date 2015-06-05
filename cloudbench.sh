@@ -8,7 +8,7 @@ echo "AWS instance type: " $EC2_nstancetype
 
 # Geekbench
 echo -e "\n\n==================================================================================================================\n\nGeekbench - CPU / Memory bandwidth:\n\n"
-wget http://geekbench.s3.amazonaws.com/Geekbench-3.1.2-Linux.tar.gz
+wget http://geekbench.s3.amazonaws.com/Geekbench-3.1.2-Linux.tar.gz | tail -15
 tar -vxzf Geekbench-3.1.2-Linux.tar.gz
 dist/Geekbench-3.1.2-Linux/geekbench_x86_64 -r zorang@gmail.com secret-key
 dist/Geekbench-3.1.2-Linux/geekbench_x86_64 --upload
@@ -17,7 +17,7 @@ dist/Geekbench-3.1.2-Linux/geekbench_x86_64 --upload
 echo -e "\n\n==================================================================================================================\n\nUNIXbench:\n\n"
 # UNIXBench
 echo -e "\n\nUNIXbench - CPU / Memory bandwidth:"
-wget -c http://byte-unixbench.googlecode.com/files/unixbench-5.1.3.tgz
+wget -c http://byte-unixbench.googlecode.com/files/unixbench-5.1.3.tgz | tail -15
 tar xvzf unixbench-5.1.3.tgz
 cd unixbench-5.1.3
 make
@@ -42,7 +42,7 @@ wget freevps.us/downloads/bench.sh -O - -o /dev/null|bash
 
 # Network Bandwidth test to local Australian site
 echo -e "\n\n==================================================================================================================\n\nAustralian network bandwidth:\n\n"
-wget http://mirror.internode.on.net/pub/centos/7.1.1503/isos/x86_64/CentOS-7-x86_64-Minimal-1503-01.iso
+wget http://mirror.internode.on.net/pub/centos/7.1.1503/isos/x86_64/CentOS-7-x86_64-Minimal-1503-01.iso | tail -15
 
 # Sequential IO test
 echo -e "\n\n==================================================================================================================\n\ndd Sequiential IO performance:\n\n"
