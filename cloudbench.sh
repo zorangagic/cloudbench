@@ -246,10 +246,11 @@ sep 'fio Max Write IOPS - 512 random write qd=32:'
 fio --name=writeiops --filename=$d --direct=1 --rw=randwrite --bs=512 --numjobs=4 --iodepth=32 --direct=1 --iodepth_batch=16 --iodepth_batch_complete=16 --runtime=120 --ramp_time=5 --norandommap --time_based --ioengine=libaio --group_reporting
 
 echo -e "\n\n\nCloubench completed - `date`"
-) 2>&1 | tee cloudbench.out
 
 if [ "$email" != "" ]
 then
-  cat cloudbench.out | mail -s "Cloudbench: `hostname` $EC2_instancetype" $email
+  cat cloudbench.out | mail -v -s "Cloudbench: `hostname` $EC2_instancetype" $email  > mail.out 2>&1
 fi
+) 2>&1 | tee cloudbench.out
+
 exit 0
