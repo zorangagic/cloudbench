@@ -22,7 +22,7 @@
 (
 sep ()
 {
-  echo -e "\n\n===========================================================================================\n\n"$1"\n\n"
+  echo -e "\n===========================================================================================\n\n"$1"\n\n"
 }
 
 usage ()
@@ -63,8 +63,13 @@ rootcheck()
 }
 
 rootcheck
-echo -e "Starting Cloudbench - `date`\n\nInstall required packages:\n\n"
-yum -y install fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes redhat-lsb glibc.i686 libstdc++ libstdc++.i686
+echo -e "Starting Cloudbench - `date`\n\nInstall required packages:" | tee cloudbench.install
+(
+yum -y install fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes redhat-lsb glibc.i686 libstdc++ libstdc++.i686 libstdc++44.i686 2>&1
+wget http://pkgs.repoforge.org/nmon/nmon-14g-1.el6.rf.x86_64.rpm
+rpm -ivh nmon-14g-1.el6.rf.x86_64.rpm
+) >> cloudbench.install 2>&1
+
 
 sep 'System info:'
 ec2=`wget -q -O /dev/null http://169.254.169.254/latest/meta-data && echo "EC2 instance" || echo "Non EC2 instance"`
@@ -92,6 +97,8 @@ echo "System kernel: $kernel"
 echo
 lscpu
 echo
+free -tm
+echo
 df -h
 echo
 fdisk -l
@@ -105,54 +112,67 @@ echo
 lsb_release -a
 
 
-if [ "$geekkey" != "" ]
-then
 # Geekbench
-sep 'Geekbench - CPU / Memory bandwidth:'
-wget http://cdn.primatelabs.com/Geekbench-3.3.2-Linux.tar.gz | tail -15
+sep 'Geekbench - CPU / Memory bandwidth:' | tee -a cloudbench.install
+(
+wget http://cdn.primatelabs.com/Geekbench-3.3.2-Linux.tar.gz | tail -5
 tar -vxzf Geekbench-3.3.2-Linux.tar.gz
-dist/Geekbench-3.3.2-Linux/geekbench_x86_32
-dist/Geekbench-3.3.2-Linux/geekbench_x86_64 -r $email $geekkey
-dist/Geekbench-3.3.2-Linux/geekbench_x86_64 --upload
+) >> cloudbench.install 2>&1
+if [ "$geekkey" == "" ]
+then
+     echo "Geekbench 32-bit:"
+     dist/Geekbench-3.3.2-Linux/geekbench_x86_32 --upload
+else
+     echo "Geekbench 64-bit:"
+     dist/Geekbench-3.3.2-Linux/geekbench_x86_64 -r $email $geekkey
+     dist/Geekbench-3.3.2-Linux/geekbench_x86_64 --upload
 fi
 
+# UNIXbench
 if [ "$nounixbench" == "" ]
 then
-# UNIXbench
-sep 'UNIXbench:'
-# UNIXBench
-echo -e "\n\nUNIXbench - CPU / Memory bandwidth:"
-wget -c http://byte-unixbench.googlecode.com/files/unixbench-5.1.3.tgz | tail -15
-tar xvzf unixbench-5.1.3.tgz
-cd unixbench-5.1.3
-make
-./Run
-cd ..
+     sep 'UNIXbench - CPU / Memory bandwidth:' | tee -a cloudbench.install
+     (
+     wget -c http://byte-unixbench.googlecode.com/files/unixbench-5.1.3.tgz | tail -15
+     tar xvzf unixbench-5.1.3.tgz
+     cd unixbench-5.1.3
+     make 2>&1
+     ) >> cloudbench.install 2>&1
+     cd unixbench-5.1.3
+     ./Run
+     cd ..
 fi
 
 # 7zip CPU test
-sep '7zip benchmark:'
+sep '7zip benchmark CPU performance (Multi thread):'  | tee -a cloudbench.install
+(
 wget http://sourceforge.net/projects/p7zip/files/p7zip/9.38.1/p7zip_9.38.1_x86_linux_bin.tar.bz2
 bzip2 -d p7zip_9.38.1_x86_linux_bin.tar.bz2
 tar xvf p7zip_9.38.1_x86_linux_bin.tar
+) >> cloudbench.install 2>&1
 p7zip_9.38.1/bin/7za b
 
 # Latency test
-sep 'LMbench L1 L2 L3 and Memory latency:'
+sep 'LMbench L1 L2 L3 and Memory latency:' | tee -a cloudbench.install
+(
 git clone https://github.com/dmonakhov/lmbench.git
 cd lmbench
 make
-bin/*/lat_mem_rd 512
 cd ..
+) >> cloudbench.install 2>&1
+lmbench/bin/*/lat_mem_rd 512
 
 # Simple CPU test
-sep 'Simple CPU performance:'
+sep 'Simple CPU performance (Single thread):'
 dd if=/dev/zero bs=1M count=1024 | md5sum
 
 # Network Bandwidth test
 sep 'Global network bandwidth:'
 ping -c 5 cachefly.cachefly.net
+echo
+echo
 traceroute cachefly.cachefly.net
+echo
 cachefly=$( wget -O /dev/null http://cachefly.cachefly.net/100mb.test 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
 echo "Download speed from CacheFly: $cachefly "
 coloatatl=$( wget -O /dev/null http://speed.atl.coloat.com/100mb.test 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
@@ -176,8 +196,8 @@ echo "Download speed from Softlayer, San Jose, CA: $slsjc "
 slwdc=$( wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test100.zip 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
 echo "Download speed from Softlayer, Washington, DC: $slwdc "
 
-sep 'Speedtest.net'
-wget -O speedtest-cli https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest_cli.py
+sep 'Speedtest.net' | tee -a cloudbench.install
+wget -O speedtest-cli https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest_cli.py >> cloudbench.install 2>&1
 chmod +x speedtest-cli
 ./speedtest-cli
 
@@ -189,6 +209,7 @@ mount $d /mnt
 cd /mnt
 dd if=/dev/zero of=tempfile bs=1M count=10240 conv=fdatasync,notrunc
 echo 3 > /proc/sys/vm/drop_caches
+echo
 dd if=tempfile of=/dev/null bs=1M count=10240
 cd /
 umount /mnt
@@ -222,15 +243,10 @@ sep 'fio Max Write IOPS - 512 random write qd=32:'
 fio --name=writeiops --filename=$d --direct=1 --rw=randwrite --bs=512 --numjobs=4 --iodepth=32 --direct=1 --iodepth_batch=16 --iodepth_batch_complete=16 --runtime=120 --ramp_time=5 --norandommap --time_based --ioengine=libaio --group_reporting
 
 echo -e "\n\n\nCloubench completed - `date`"
-) 2>&1  | tee cloudbench.out
+) 2>&1 | tee cloudbench.out
 
 if [ "$email" != "" ]
 then
   cat cloudbench.out | mail -s "Cloudbench: `hostname` $EC2_instancetype" $email
 fi
-
 exit 0
-^Cm -y --nogpgcheck    install  glibc.i686 libstdc++ libstdc++.i686
-[root@ip-172-30-0-72 cloudbench]# ^Cget http://public-yum.oracle.com/public-yum-ol6.repo
-
-sudo ln -s /lib/i386-linux-gnu/libc.so.6 /lib/libc.so.6
