@@ -77,6 +77,9 @@ if [ "$ec2" == "EC2 instance" ]
 then
    EC2_instancetype="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-type || die \"wget nstance-type has failed: $?\"`"
    echo "AWS instance type: " $EC2_instancetype
+   echo "User Data:" 
+   curl http://169.254.169.254/latest/user-data
+   echo
 fi
 cname=$( awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo )
 cores=$( awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo )
