@@ -64,13 +64,11 @@ rootcheck()
 
 rootcheck
 echo -e "Starting Cloudbench - `date`\n\nInstall required packages:\n\n"
-wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-rpm -Uvh epel-release-6*.rpm
-yum -y install fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes p7zip glibc.i686 libstdc++ libstdc++.i686
+yum -y install fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes redhat-lsb glibc.i686 libstdc++ libstdc++.i686
 
 sep 'System info:'
-ec2=` wget -q http://instance-data.ec2.internal && echo "EC2 instance" || echo "Non EC2 instance"`
-if [ "$e" == "EC2 instance" ]
+ec2=`wget -q -O /dev/null http://169.254.169.254/latest/meta-data && echo "EC2 instance" || echo "Non EC2 instance"`
+if [ "$ec2" == "EC2 instance" ]
 then
    EC2_instancetype="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-type || die \"wget nstance-type has failed: $?\"`"
    echo "AWS instance type: " $EC2_instancetype
@@ -134,8 +132,10 @@ fi
 
 # 7zip CPU test
 sep '7zip benchmark:'
-yum -y install p7zip
-7za b
+wget http://sourceforge.net/projects/p7zip/files/p7zip/9.38.1/p7zip_9.38.1_x86_linux_bin.tar.bz2
+bzip2 -d p7zip_9.38.1_x86_linux_bin.tar.bz2
+tar xvf p7zip_9.38.1_x86_linux_bin.tar
+p7zip_9.38.1/bin/7za b
 
 # Latency test
 sep 'LMbench L1 L2 L3 and Memory latency:'
@@ -228,3 +228,9 @@ if [ "$email" != "" ]
 then
   cat cloudbench.out | mail -s "Cloudbench: `hostname` $EC2_instancetype" $email
 fi
+
+exit 0
+^Cm -y --nogpgcheck    install  glibc.i686 libstdc++ libstdc++.i686
+[root@ip-172-30-0-72 cloudbench]# ^Cget http://public-yum.oracle.com/public-yum-ol6.repo
+
+sudo ln -s /lib/i386-linux-gnu/libc.so.6 /lib/libc.so.6
