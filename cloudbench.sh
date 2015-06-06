@@ -112,7 +112,7 @@ sep 'Geekbench - CPU / Memory bandwidth:'
 wget http://cdn.primatelabs.com/Geekbench-3.3.2-Linux.tar.gz | tail -15
 tar -vxzf Geekbench-3.3.2-Linux.tar.gz
 dist/Geekbench-3.3.2-Linux/geekbench_x86_32
-dist/Geekbench-3.3.2-Linux/geekbench_x86_64 -r zorang@gmail.com secret-key
+dist/Geekbench-3.3.2-Linux/geekbench_x86_64 -r zorang@gmail.com $geekkey
 dist/Geekbench-3.3.2-Linux/geekbench_x86_64 --upload
 fi
 
