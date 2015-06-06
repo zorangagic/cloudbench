@@ -64,6 +64,8 @@ rootcheck()
 
 rootcheck
 echo -e "Starting Cloudbench - `date`\n\nInstall required packages:\n\n"
+wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+rpm -Uvh epel-release-6*.rpm
 yum -y install fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes p7zip glibc.i686 libstdc++ libstdc++.i686
 
 sep 'System info:'
@@ -112,7 +114,7 @@ sep 'Geekbench - CPU / Memory bandwidth:'
 wget http://cdn.primatelabs.com/Geekbench-3.3.2-Linux.tar.gz | tail -15
 tar -vxzf Geekbench-3.3.2-Linux.tar.gz
 dist/Geekbench-3.3.2-Linux/geekbench_x86_32
-dist/Geekbench-3.3.2-Linux/geekbench_x86_64 -r zorang@gmail.com $geekkey
+dist/Geekbench-3.3.2-Linux/geekbench_x86_64 -r $email $geekkey
 dist/Geekbench-3.3.2-Linux/geekbench_x86_64 --upload
 fi
 
@@ -132,6 +134,7 @@ fi
 
 # 7zip CPU test
 sep '7zip benchmark:'
+yum -y install p7zip
 7za b
 
 # Latency test
