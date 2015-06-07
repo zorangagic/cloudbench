@@ -79,7 +79,7 @@ then
    EC2_instancetype="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-type || die \"wget nstance-type has failed: $?\"`"
    echo "AWS instance type: " $EC2_instancetype
    echo "User Data:"
-   curl http://169.254.169.254/latest/user-data
+   curl http://169.254.169.254/latest/user-data 2>/dev/null
    echo
 fi
 cname=$( awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo )
@@ -206,14 +206,16 @@ chmod +x speedtest-cli
 ./speedtest-cli
 
 # Sequential IO test
-sep 'dd Sequiential IO performance:'
+sep 'dd Sequential IO performance:'
 d=`fdisk -l | grep Disk | grep -v identifier | tail -1 | cut -d' ' -f2 | cut -d':' -f1`
 mkfs.ext4 -F $d
 mount $d /mnt
 cd /mnt
+echo "dd Write performance:"
 dd if=/dev/zero of=tempfile bs=1M count=10240 conv=fdatasync,notrunc
 echo 3 > /proc/sys/vm/drop_caches
 echo
+echo "dd Read performance:"
 dd if=tempfile of=/dev/null bs=1M count=10240
 cd /
 umount /mnt
