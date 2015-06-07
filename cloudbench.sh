@@ -63,6 +63,7 @@ rootcheck()
 }
 
 rootcheck
+basdir=`pwd`
 echo -e "Starting Cloudbench - `date`\n\nInstall required packages:" | tee cloudbench.install
 (
 yum -y install fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes redhat-lsb glibc.i686 libstdc++ libstdc++.i686 libstdc++44.i686 2>&1
@@ -77,7 +78,7 @@ if [ "$ec2" == "EC2 instance" ]
 then
    EC2_instancetype="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-type || die \"wget nstance-type has failed: $?\"`"
    echo "AWS instance type: " $EC2_instancetype
-   echo "User Data:" 
+   echo "User Data:"
    curl http://169.254.169.254/latest/user-data
    echo
 fi
@@ -249,6 +250,7 @@ echo -e "\n\n\nCloubench completed - `date`"
 
 if [ "$email" != "" ]
 then
+  cd $basedir
   cat cloudbench.out | mail -v -s "Cloudbench: `hostname` $EC2_instancetype" $email  > mail.out 2>&1
 fi
 ) 2>&1 | tee cloudbench.out
