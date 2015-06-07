@@ -63,7 +63,7 @@ rootcheck()
 }
 
 rootcheck
-basdir=`pwd`
+basedir=`pwd`
 echo -e "Starting Cloudbench - `date`\n\nInstall required packages:" | tee cloudbench.install
 (
 yum -y install fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes redhat-lsb glibc.i686 libstdc++ libstdc++.i686 libstdc++44.i686 2>&1
