@@ -147,6 +147,16 @@ then
      cd ..
 fi
 
+# Stream
+sep 'Stream memory bandwidth:'  | tee -a cloudbench.install
+(
+wget http://www.cs.virginia.edu/stream/FTP/Code/Makefile
+wget http://www.cs.virginia.edu/stream/FTP/Code/stream.c
+wget http://www.cs.virginia.edu/stream/FTP/Code/mysecond.c
+make stream_c.exe
+) >> cloudbench.install 2>&1
+./stream_c.exe
+
 # 7zip CPU test
 sep '7zip benchmark CPU performance (Multi thread):'  | tee -a cloudbench.install
 (
