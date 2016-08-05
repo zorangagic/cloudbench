@@ -180,6 +180,10 @@ lmbench/bin/*/lat_mem_rd 512
 sep 'Simple CPU performance (Single thread):'
 dd if=/dev/zero bs=1M count=1024 | md5sum
 
+# ssl RSA test
+sep 'SSL RSA speedtest:'
+ssl speedtest RSA
+
 # Network Bandwidth test
 sep 'Global network bandwidth:'
 ping -c 5 cachefly.cachefly.net
