@@ -67,8 +67,11 @@ basedir=`pwd`
 echo -e "Starting Cloudbench - `date`\n\nInstall required packages:" | tee cloudbench.install
 (
 yum -y install fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes redhat-lsb glibc.i686 libstdc++ libstdc++.i686 libstdc++44.i686 2>&1
-wget http://pkgs.repoforge.org/nmon/nmon-14g-1.el6.rf.x86_64.rpm
-rpm -ivh nmon-14g-1.el6.rf.x86_64.rpm
+mkdir nmon; cd nmon
+wget http://sourceforge.net/projects/nmon/files/nmon16e_mr_nmon.tar.gz
+tar -zxvf  nmon16e_mr_nmon.tar.gz
+cp nmon16e_x86_rhel72 /bin
+cd $basedir
 ) >> cloudbench.install 2>&1
 
 
