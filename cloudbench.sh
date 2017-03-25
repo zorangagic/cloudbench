@@ -66,7 +66,7 @@ rootcheck
 basedir=`pwd`
 echo -e "Starting Cloudbench - `date`\n\nInstall required packages:" | tee cloudbench.install
 (
-yum -y install fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes redhat-lsb glibc.i686 libstdc++ libstdc++.i686 libstdc++44.i686 2>&1
+yum -y install bzip2 fio git iperf mail gcc sysstat libX11-devel mesa-libGL-devel perl-Time-HiRes redhat-lsb glibc.i686 libstdc++ libstdc++.i686 libstdc++44.i686 2>&1
 mkdir nmon; cd nmon
 wget http://sourceforge.net/projects/nmon/files/nmon16e_mr_nmon.tar.gz
 tar -zxvf  nmon16e_mr_nmon.tar.gz
@@ -218,10 +218,18 @@ slwdc=$( wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test10
 echo "Download speed from Softlayer, Washington, DC: $slwdc "
 
 sep 'Speedtest.net' | tee -a cloudbench.install
-wget -O speedtest-cli https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest_cli.py >> cloudbench.install 2>&1
-chmod +x speedtest-cli
-./speedtest-cli
+wget https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
+python speedtest.py
 
+
+# AWS latency
+sep 'AWS latency:'
+for region in "ec2.us-east-1.amazonaws.com ec2.us-west-1.amazonaws.com ec2.ap-southeast-1.amazonaws.com ec2.us-west-2.amazonaws.com ec2.sa-east-1.amazonaws.com ec2.eu-central-1.amazonaws.com ec2.eu-west-1.amazonaws.com ec2.eu-west-2.amazonaws.com ec2.ap-northeast-1.amazonaws.com ec2.ap-northeast-1.amazonaws.com ec2.ap-southeast-2.amazonaws.com ec2.ap-south-1.amazonaws.com"
+do
+   ping -c 3 $region
+   echo 
+done 
+ 
 # Sequential IO test
 sep 'dd Sequential IO performance:'
 d=`fdisk -l | grep Disk | grep -v identifier | tail -1 | cut -d' ' -f2 | cut -d':' -f1`
