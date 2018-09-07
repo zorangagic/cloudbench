@@ -140,12 +140,16 @@ if [ "$nounixbench" == "" ]
 then
      sep 'UNIXbench - CPU / Memory bandwidth:' | tee -a cloudbench.install
      (
-     wget -c http://byte-unixbench.googlecode.com/files/unixbench-5.1.3.tgz | tail -15
+     wget -c https://s3.amazonaws.com/cloudbench/software/UnixBench5.1.3.tgz | tail -15
+     $wget -c http://byte-unixbench.googlecode.com/files/unixbench-5.1.3.tgz | tail -15
      tar xvzf unixbench-5.1.3.tgz
-     cd unixbench-5.1.3
-     make 2>&1
+     #cd unixbench-5.1.3
+     cd Unixbench
+     #make 2>&1
+     make all
      ) >> cloudbench.install 2>&1
-     cd unixbench-5.1.3
+     # cd unixbench-5.1.3
+     cd Unixbench
      ./Run
      cd ..
 fi
